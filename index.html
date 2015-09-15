@@ -40,20 +40,24 @@
        
       <form role="form" style="margin-bottom:10px;" >
         <div class="form-group">
-          <label for="subreddit">Subreddit: <span style="font-size:10px"><em>(default to r/all if left blank)</em></label>
+         <!-- <label for="subreddit">Subreddit: <span style="font-size:10px"><em>(default to r/all if left blank)</em></label>
           <input type="text" class="form-control" id="subreddit">
 
-        <label style="margin-top:4px;" for="sort">Sort by:</label>
+        label style="margin-top:4px;" for="sort">Sort by:</label>
           <select class="form-control" id="sort">
+            <option>relevance</option>
             <option>hot</option>
             <option>top</option>
             <option>new</option>
-            <option>controversial</option>
-          </select>
+          </select>-->
+
+           <label for="search">Search Term:</label>
+          <input type="text" class="form-control" id="search">
+
 
         </div>
         <button type="submit" id="submit" class="btn btn-default">Submit</button>
-        <em style="margin-left:25px; color:blue;">Retrieve top 5 posts</em>
+        <em style="margin-left:25px; color:blue;">Retrieve 5 posts matching term</em>
       </form>
       <hr>
 
@@ -65,17 +69,17 @@
     $( "#submit" ).click(function(e) {
        e.preventDefault();
        // reset the div
+
        $("#tbj-feed" ).html("");
-       sReddit = $("#subreddit" ).val();
-       sSort = $("#sort" ).val();
-       if(sReddit == ""){
-          sReddit = "all"
-       }
-       sSort = "/" + sSort
-       //alert(sReddit)
+      // sReddit = $("#subreddit" ).val();
+      // sSort = $("#sort" ).val();
+       sSearch = $("#search" ).val();
+       //if(sReddit == ""){
+          //sReddit = "all"
+       //}
+      //sSort = "/" + sSort
       $.getJSON(
-        // Set the sub reddit via the URL below
-        "http://www.reddit.com/r/" + sReddit + sSort +".json?jsonp=?",
+           "http://www.reddit.com/search.json?q=" + sSearch + "&restrict_sr=&sort=relevance&t=all" ,
         function foo(data)
         {
           // Parse the JSON return
@@ -92,9 +96,9 @@
           )
         }
       )
-      .error(function() { alert("This reddit does not exist.");  })
-      .complete(function() { alert("r/" + sReddit + " loaded"); });
-      $("#details" ).html("Top 5 results for <b>r/" + sReddit + "</b> sorted by <b>" + sSort + "</b>");
+      .error(function() { alert("Error retrieving results for this term.");  })
+      .complete(function() { alert("Results loaded."); });
+      $("#details" ).html("Top 5 results for <b>" + sSearch + "</b>");
      });
 
 
