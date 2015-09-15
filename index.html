@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+   <link rel="stylesheet" href="css/bootstrap-min.css">
+   <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+
+    <script>
+    sReddit = "all"
+    </script>
+
+  </head>
+
+  <body>
+    <div class="container" style="margin-top:20px;">
+       
+      <form role="form" style="margin-bottom:10px;" >
+        <div class="form-group">
+          <label for="subreddit">Subreddit: <span style="font-size:10px"><em>(default to r/all if left blank)</em></label>
+          <input type="text" class="form-control" id="subreddit">
+
+        <label style="margin-top:4px;" for="sort">Sort by:</label>
+          <select class="form-control" id="sort">
+            <option>hot</option>
+            <option>top</option>
+            <option>new</option>
+            <option>controversial</option>
+          </select>
+
+        </div>
+        <button type="submit" id="submit" class="btn btn-default">Submit</button>
+        <em style="margin-left:25px; color:blue;">Retrieve top 5 posts</em>
+      </form>
+      <hr>
+
+       <p id="details"></p>
+       <div id="tbj-feed"></div>
+    </div>
+
+    <script>
+    $( "#submit" ).click(function(e) {
+       e.preventDefault();
+       // reset the div
+       $("#tbj-feed" ).html("");
+       sReddit = $("#subreddit" ).val();
+       sSort = $("#sort" ).val();
+       if(sReddit == ""){
+          sReddit = "all"
+       }
+       sSort = "/" + sSort
+       //alert(sReddit)
+      $.getJSON(
+        // Set the sub reddit via the URL below
+        "http://www.reddit.com/r/" + sReddit + sSort +".json?jsonp=?",
+        function foo(data)
+        {
+          // Parse the JSON return
+          $.each(
+            data.data.children.slice(0, 5),
+            function (i, post) {
+              sPosition = i + 1
+              //$("#tbj-feed").append('<div style="width:30px; color:#000">' + sPosition +'</div>')
+
+              $("#tbj-feed").append( '<div class="list-group"><a href="' + post.data.url + '" class="list-group-item active" style="padding:0px; height:64px; border:0px !important"><div style="width:64px; background:#F58832; display:inline-block; text-align:center; float:left; padding:0px 0px 0px; color:#FFF; height:64px; margin-right:12px; font-size:24px;"> <div class="glyphicon glyphicon-menu-up" style="width:100%;"></div><div style="margin-top:-12px;">' + post.data.ups + '</div></div><div style="padding:15px;"><h4 class="list-group-item-heading">' + post.data.title + '</h4></div></a></div>' );
+
+
+            }
+          )
+        }
+      )
+      .error(function() { alert("This reddit does not exist.");  })
+      .complete(function() { alert("r/" + sReddit + " loaded"); });
+      $("#details" ).html("Top 5 results for <b>r/" + sReddit + "</b> sorted by <b>" + sSort + "</b>");
+     });
+
+
+    </script>
+
+  </body>
+</html>
